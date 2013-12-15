@@ -25,8 +25,24 @@ public final class R {
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f080000;
-        public static final int action_settings=0x7f080002;
+        public static final int action_settings=0x7f080012;
         public static final int btnPcs=0x7f080001;
+        public static final int createDir=0x7f080002;
+        public static final int deleteDir=0x7f080003;
+        public static final int deletePersonalFile=0x7f08000a;
+        public static final int downloadPersonalFile=0x7f080006;
+        public static final int downloadPersonalStreamFile=0x7f080007;
+        public static final int personalAudioList=0x7f08000e;
+        public static final int personalDocList=0x7f08000f;
+        public static final int personalFileResult=0x7f080011;
+        public static final int personalImageList=0x7f08000c;
+        public static final int personalList=0x7f08000b;
+        public static final int personalQuota=0x7f080010;
+        public static final int personalThumbnail=0x7f080008;
+        public static final int personalVideoList=0x7f08000d;
+        public static final int stopDownloadPersonalFile=0x7f080009;
+        public static final int stopUploadPersonalFile=0x7f080005;
+        public static final int uploadPersonalFile=0x7f080004;
     }
     public static final class layout {
         public static final int bctmain=0x7f030000;

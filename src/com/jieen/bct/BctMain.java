@@ -1,6 +1,7 @@
 package com.jieen.bct;
 
-import com.jieen.bct.Pcs.pscMain;
+import com.baidu.frontia.Frontia;
+import com.jieen.bct.Pcs.pcsMain;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,7 +16,6 @@ public class BctMain extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.bctmain);
-		
 		btnPcsMain = (Button) findViewById(R.id.btnPcs);
 		btnPcsMain.setOnClickListener(btnMainClickListener);
 		
@@ -26,7 +26,7 @@ public class BctMain extends Activity {
 			switch(v.getId())
 			{
 			case R.id.btnPcs:	//进入PCS主页按钮
-				Intent pcsIntent = new Intent(BctMain.this,pscMain.class);
+				Intent pcsIntent = new Intent(BctMain.this,pcsMain.class);
 				startActivity(pcsIntent);
 				break;
 			}
