@@ -7,6 +7,7 @@ import java.util.List;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -23,8 +24,13 @@ import com.baidu.frontia.api.FrontiaAuthorizationListener.AuthorizationListener;
 import com.baidu.frontia.api.FrontiaPersonalStorageListener.FileInfoListener;
 import com.baidu.frontia.api.FrontiaPersonalStorageListener.FileInfoResult;
 import com.baidu.frontia.api.FrontiaPersonalStorageListener.FileListListener;
+import com.baidu.frontia.api.FrontiaPersonalStorageListener.FileOperationListener;
+import com.baidu.frontia.api.FrontiaPersonalStorageListener.FileProgressListener;
+import com.baidu.frontia.api.FrontiaPersonalStorageListener.FileTransferListener;
+import com.baidu.frontia.api.FrontiaPersonalStorageListener.FileUploadListener;
 import com.baidu.frontia.api.FrontiaPersonalStorageListener.QuotaListener;
 import com.baidu.frontia.api.FrontiaPersonalStorageListener.QuotaResult;
+import com.baidu.frontia.api.FrontiaPersonalStorageListener.ThumbnailListener;
 import com.jieen.bct.R;
 
 public class pcsMain extends Activity {
@@ -97,6 +103,126 @@ public class pcsMain extends Activity {
 			}
 
 		});
+		
+		 Button deleteDirButton = (Button) findViewById(R.id.deleteDir);
+	        deleteDirButton.setOnClickListener(new View.OnClickListener(){
+
+	            @Override
+	            public void onClick(View view) {
+	                deleteDir();
+	            }
+	        });
+        Button uploadFileButton = (Button) findViewById(R.id.uploadPersonalFile);
+		uploadFileButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				uploadFile();
+			}
+
+		});    
+		
+		Button stopUploadFileButton = (Button) findViewById(R.id.stopUploadPersonalFile);
+		stopUploadFileButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				stopUploadFile();
+			}
+
+		});
+
+		Button downloadFileButton = (Button) findViewById(R.id.downloadPersonalFile);
+		downloadFileButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				downloadFile();
+			}
+
+		});
+
+		Button downloadStreamFileButton = (Button) findViewById(R.id.downloadPersonalStreamFile);
+		downloadStreamFileButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				downloadStreamFile();
+			}
+
+		});
+
+		Button stopDownloadFileButton = (Button) findViewById(R.id.stopDownloadPersonalFile);
+		stopDownloadFileButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				stopDownloadFile();
+			}
+
+		});
+
+		Button deleteFileButton = (Button) findViewById(R.id.deletePersonalFile);
+		deleteFileButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				deleteFile();
+			}
+
+		});
+		
+		Button imageListButton = (Button) findViewById(R.id.personalImageList);
+		imageListButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				imageList();
+			}
+
+		});
+
+		Button videoListButton = (Button) findViewById(R.id.personalVideoList);
+		videoListButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				videoList();
+			}
+
+		});
+
+		Button audioListButton = (Button) findViewById(R.id.personalAudioList);
+		audioListButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				audioList();
+			}
+
+		});
+
+		Button docListButton = (Button) findViewById(R.id.personalDocList);
+		docListButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				docList();
+			}
+
+		});
+		
+		Button thumbnailButton = (Button) findViewById(R.id.personalThumbnail);
+		thumbnailButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				thumbnail();
+			}
+
+		});
+		
+	        
 	}
 	//创建目录实现方法
 	protected void createDir() {
@@ -186,5 +312,333 @@ public class pcsMain extends Activity {
 					}
 				});
 	}
+	//删除目录
+	private void deleteDir(){
+        mCloudStorage.deleteFile(PcsConf.PERSON_STORAGE_DIR_NAME, new FileOperationListener() {
+            @Override
+            public void onSuccess(String s) {
+                mResultTextView.setText(PcsConf.PERSON_STORAGE_DIR_NAME + " deleted");
+            }
 
+            @Override
+            public void onFailure(String s, int errCode, String errMsg) {
+                mResultTextView.setText("errCode:" + errCode
+                        + ", errMsg:" + errMsg);
+            }
+        });
+    }
+	//上传文件
+	protected void uploadFile() {
+
+        mCloudStorage.uploadFile(PcsConf.LOCAL_FILE_NAME,
+				PcsConf.PERSON_STORAGE_FILE_NAME,
+				new FileProgressListener() {
+
+					@Override
+					public void onProgress(String source, long bytes, long total) {
+						if (null != mResultTextView) {
+							mResultTextView.setText(source + " upload......:"
+									+ bytes * 100 / total + "%");
+						}
+
+					}
+
+				}, new FileUploadListener() {
+
+					@Override
+					public void onSuccess(String source,
+							FileInfoResult result) {
+						StringBuilder sb = new StringBuilder();
+						sb.append(source)
+								.append(':')
+								.append(result.getPath())
+								.append('\n')
+								.append("size: ")
+								.append(result.getSize())
+								.append('\n')
+								.append("modified time: ")
+								.append(new Date(result.getModifyTime()*1000));
+						if (null != mResultTextView) {
+							mResultTextView.setText(sb.toString());
+						}
+
+					}
+
+					@Override
+					public void onFailure(String source, int errCode,
+							String errMsg) {
+						if (null != mResultTextView) {
+							mResultTextView.setText(source + " errCode:"
+									+ errCode + ", errMsg:" + errMsg);
+						}
+
+					}
+
+				});
+    }
+	
+	
+	protected void stopUploadFile() {
+		mCloudStorage.stopTransferring(PcsConf.LOCAL_FILE_NAME,
+				PcsConf.PERSON_STORAGE_FILE_NAME);
+	}
+
+	protected void downloadFile() {
+		mCloudStorage.downloadFile(PcsConf.PERSON_STORAGE_FILE_NAME,
+				PcsConf.LOCAL_FILE_NAME,
+				new FileProgressListener() {
+
+					@Override
+					public void onProgress(String source, long bytes, long total) {
+						if (null != mResultTextView) {
+							mResultTextView.setText(source + " download......:"
+									+ bytes * 100 / total + "%");
+						}
+					}
+
+				}, new FileTransferListener() {
+
+					@Override
+					public void onSuccess(String source, String newTargetName) {
+						if (null != mResultTextView) {
+							mResultTextView.setText(source + " downloaded as "
+									+ newTargetName + " in the local.");
+						}
+					}
+
+					@Override
+					public void onFailure(String source, int errCode,
+							String errMsg) {
+						if (null != mResultTextView) {
+							mResultTextView.setText(source + " errCode:"
+									+ errCode + ", errMsg:" + errMsg);
+						}
+					}
+
+				});
+	}
+
+	protected void downloadStreamFile() {
+		mCloudStorage.downloadFileFromStream(
+				PcsConf.PERSON_STORAGE_FILE_NAME, PcsConf.LOCAL_FILE_NAME,
+				new FileProgressListener() {
+
+					@Override
+					public void onProgress(String source, long bytes, long total) {
+						if (null != mResultTextView) {
+							mResultTextView.setText(source + " download......:"
+									+ bytes * 100 / total + "%");
+						}
+
+					}
+
+				}, new FileTransferListener() {
+
+					@Override
+					public void onSuccess(String source, String newTargetName) {
+						if (null != mResultTextView) {
+							mResultTextView.setText(source + " downloaded as "
+									+ newTargetName + " in the local.");
+						}
+
+					}
+
+					@Override
+					public void onFailure(String source, int errCode,
+							String errMsg) {
+						if (null != mResultTextView) {
+							mResultTextView.setText(source + " errCode:"
+									+ errCode + ", errMsg:" + errMsg);
+						}
+
+					}
+
+				});
+	}
+
+	protected void stopDownloadFile() {
+		mCloudStorage.stopTransferring(PcsConf.PERSON_STORAGE_FILE_NAME,
+				PcsConf.LOCAL_FILE_NAME);
+	}
+	
+	
+	protected void deleteFile() {
+		mCloudStorage.deleteFile(PcsConf.PERSON_STORAGE_FILE_NAME,
+				new FileOperationListener() {
+
+					@Override
+					public void onSuccess(String source) {
+						if (null != mResultTextView) {
+							mResultTextView.setText(source + " is deleted");
+						}
+					}
+
+					@Override
+					public void onFailure(String source, int errCode,
+							String errMsg) {
+						if (null != mResultTextView) {
+							mResultTextView.setText(source + " errCode:"
+									+ errCode + ", errMsg:" + errMsg);
+						}
+
+					}
+
+				});
+	}
+	
+	protected void imageList() {
+		mCloudStorage.imageStream(
+				new FileListListener() {
+
+					@Override
+					public void onSuccess(List<FileInfoResult> result) {
+						StringBuilder sb = new StringBuilder();
+						for (FileInfoResult info : result) {
+							sb.append(info.getPath())
+									.append('\n')
+									.append("size: ")
+									.append(info.getSize())
+									.append('\n')
+									.append("modified time: ")
+									.append(new Date(info.getModifyTime())
+											.toString()).append('\n');
+
+						}
+						if (null != mResultTextView) {
+							mResultTextView.setText(sb.toString());
+						}
+					}
+
+					@Override
+					public void onFailure(int errCode, String errMsg) {
+						if (null != mResultTextView) {
+							mResultTextView.setText("errCode:" + errCode
+									+ ", errMsg:" + errMsg);
+						}
+					}
+				});
+	}
+
+	protected void videoList() {
+		mCloudStorage.videoStream(
+				new FileListListener() {
+
+					@Override
+					public void onSuccess(List<FileInfoResult> result) {
+						StringBuilder sb = new StringBuilder();
+						for (FileInfoResult info : result) {
+
+							sb.append(info.getPath())
+									.append('\n')
+									.append("size: ")
+									.append(info.getSize())
+									.append('\n')
+									.append("modified time: ")
+									.append(new Date(info.getModifyTime())
+											.toString()).append('\n');
+
+						}
+						if (null != mResultTextView) {
+							mResultTextView.setText(sb.toString());
+						}
+					}
+
+					@Override
+					public void onFailure(int errCode, String errMsg) {
+						if (null != mResultTextView) {
+							mResultTextView.setText("errCode:" + errCode
+									+ ", errMsg:" + errMsg);
+						}
+					}
+				});
+	}
+
+	protected void audioList() {
+		mCloudStorage.audioStream(
+				new FileListListener() {
+
+					@Override
+					public void onSuccess(List<FileInfoResult> result) {
+						StringBuilder sb = new StringBuilder();
+						for (FileInfoResult info : result) {
+							sb.append(info.getPath())
+									.append('\n')
+									.append("size: ")
+									.append(info.getSize())
+									.append('\n')
+									.append("modified time: ")
+									.append(new Date(info.getModifyTime())
+											.toString()).append('\n');
+
+						}
+						if (null != mResultTextView) {
+							mResultTextView.setText(sb.toString());
+						}
+					}
+
+					@Override
+					public void onFailure(int errCode, String errMsg) {
+						if (null != mResultTextView) {
+							mResultTextView.setText("errCode:" + errCode
+									+ ", errMsg:" + errMsg);
+						}
+					}
+				});
+	}
+
+	protected void docList() {
+		mCloudStorage.docStream(
+				new FileListListener() {
+
+					@Override
+					public void onSuccess(List<FileInfoResult> result) {
+						StringBuilder sb = new StringBuilder();
+						for (FileInfoResult info : result) {
+							sb.append(info.getPath())
+									.append('\n')
+									.append("size: ")
+									.append(info.getSize())
+									.append('\n')
+									.append("modified time: ")
+									.append(new Date(info.getModifyTime())
+											.toString()).append('\n');
+
+						}
+						if (null != mResultTextView) {
+							mResultTextView.setText(sb.toString());
+						}
+					}
+
+					@Override
+					public void onFailure(int errCode, String errMsg) {
+						if (null != mResultTextView) {
+							mResultTextView.setText("errCode:" + errCode
+									+ ", errMsg:" + errMsg);
+						}
+					}
+				});
+	}
+	
+	protected void thumbnail() {
+		mCloudStorage.thumbnail(PcsConf.PERSON_STORAGE_FILE_NAME, 10,
+				10, 10,
+				new ThumbnailListener() {
+
+					@Override
+					public void onSuccess(Bitmap bitmap) {
+						if (null != mResultTextView) {
+							mResultTextView.setText(bitmap.toString());
+						}
+					}
+
+					@Override
+					public void onFailure(int errCode, String errMsg) {
+						if (null != mResultTextView) {
+							mResultTextView.setText("errCode:" + errCode
+									+ ", errMsg:" + errMsg);
+						}
+					}
+				});
+	}
+	
 }
