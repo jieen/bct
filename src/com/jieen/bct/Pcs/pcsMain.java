@@ -43,6 +43,8 @@ public class pcsMain extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.pcsmain);
+		
+/*		
 		Frontia.init(this.getApplicationContext(), PcsConf.APIKEY);
 		ArrayList<String> list = new ArrayList<String>();
 		list.add("basic");
@@ -70,11 +72,11 @@ public class pcsMain extends Activity {
 				setContentView(view);
 			}
 		});
-		
+		*/
 	}
 	
 	private void setupViews() {
-		setContentView(R.layout.pcsmain);
+		setContentView(R.layout.pcsmain_test);
 		mResultTextView = (TextView) findViewById(R.id.personalFileResult);
 
 		Button createDirButton = (Button) findViewById(R.id.createDir);
