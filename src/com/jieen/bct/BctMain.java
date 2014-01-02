@@ -1,6 +1,5 @@
 package com.jieen.bct;
 
-import com.baidu.frontia.Frontia;
 import com.jieen.bct.Pcs.pcsMain;
 
 import android.app.Activity;
@@ -8,15 +7,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.widget.ImageButton;
 
 public class BctMain extends Activity {
 
-	private Button btnPcsMain = null;
+	private ImageButton btnPcsMain = null;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.bctmain);
-		btnPcsMain = (Button) findViewById(R.id.btnPcs);
+		btnPcsMain = (ImageButton) findViewById(R.id.ibpcs);
 		btnPcsMain.setOnClickListener(btnMainClickListener);
 		
 	}
@@ -25,7 +24,7 @@ public class BctMain extends Activity {
 		public void onClick(View v) {
 			switch(v.getId())
 			{
-			case R.id.btnPcs:	//进入PCS主页按钮
+			case R.id.ibpcs:	//进入PCS主页按钮
 				Intent pcsIntent = new Intent(BctMain.this,pcsMain.class);
 				startActivity(pcsIntent);
 				break;

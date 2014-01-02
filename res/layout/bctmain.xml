@@ -3,16 +3,49 @@
 	android:id="@+id/RelativeLayout1"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:orientation="vertical" >
+	android:background="@drawable/bdcloud_bg"
+	>
 
-	<Button
-		android:id="@+id/btnPcs"
+	<ImageButton
+		android:id="@+id/ibabout"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentRight="true"
+		android:layout_alignTop="@+id/ibpcs"
+		android:background="@drawable/cloud_small"
+		android:contentDescription="@string/strPcs"
+		android:src="@drawable/lbs_text" />
+
+	<ImageButton
+		android:id="@+id/ibpcs"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_below="@+id/iblbs"
+		android:background="@drawable/cloud_small"
+		android:contentDescription="@string/strPcs"
+		android:src="@drawable/pcs_text" />
+
+	<ImageButton
+		android:id="@+id/iblbs"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentLeft="true"
 		android:layout_alignParentTop="true"
-		android:layout_marginLeft="45dp"
-		android:layout_marginTop="28dp"
-		android:text="@string/strPcs" />
+		android:layout_marginLeft="46dp"
+		android:background="@drawable/cloud_small"
+		android:contentDescription="@string/strPcs"
+		android:src="@drawable/lbs_text" />
+
+	<ImageButton
+		android:id="@+id/ibupgrade"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:layout_marginLeft="16dp"
+		android:layout_toRightOf="@+id/iblbs"
+		android:background="@drawable/cloud_small"
+		android:contentDescription="@string/strPcs"
+		android:src="@drawable/lbs_text" />
 
 </RelativeLayout>
