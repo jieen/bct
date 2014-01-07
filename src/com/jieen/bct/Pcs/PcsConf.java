@@ -10,6 +10,7 @@ public class PcsConf {
     //personal file storage demo
     //public final static String PERSON_STORAGE_DIR_NAME = "/apps/FrontiaDevDemo/pic";
     public final static String PERSON_STORAGE_DIR_NAME = "/apps/CloudTerminal";
+    public final static String PERSON_STORAGE_DIR_NAME1 = "/";
 
     public final static String PERSON_STORAGE_FILE_NAME = "/apps/CloudTerminal/pic/custom.jpg";
 	

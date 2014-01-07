@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.ImageButton;
 
 public class BctMain extends Activity {
@@ -14,6 +15,7 @@ public class BctMain extends Activity {
 	private ImageButton btnPcsMain = null;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.bctmain);
 		btnPcsMain = (ImageButton) findViewById(R.id.ibpcs);
 		btnPcsMain.setOnClickListener(btnMainClickListener);

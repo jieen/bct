@@ -2,18 +2,25 @@ package com.jieen.bct.Pcs;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.zip.Inflater;
 
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baidu.frontia.Frontia;
 import com.baidu.frontia.FrontiaUser;
@@ -38,13 +45,16 @@ public class pcsMain extends Activity {
 	private FrontiaPersonalStorage mCloudStorage;
 	private FrontiaAuthorization authorization;
 
-	private TextView mResultTextView;
+	private ListView lv;
+	private pcsFileInfo pcsFileItem;
+	ArrayList<FileInfoResult> myList;
+	private FileInfoResult fir;
+	private int pcsFileCount = 0;
+	protected String tag = "pcsMain";
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.pcsmain);
 		
-/*		
 		Frontia.init(this.getApplicationContext(), PcsConf.APIKEY);
 		ArrayList<String> list = new ArrayList<String>();
 		list.add("basic");
@@ -72,12 +82,45 @@ public class pcsMain extends Activity {
 				setContentView(view);
 			}
 		});
-		*/
+	}
+	protected void setupViews() {
+		setContentView(R.layout.pcsmain);
+		lv = (ListView) findViewById(R.id.lvFileItems);
+		getPcsFileInfo();
+	}
+	private class MyAdapter extends BaseAdapter
+	{
+
+		@Override
+		public int getCount() {
+			return myList.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return null;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return 0;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			FileInfoResult fir = myList.get(position);
+			View view = View.inflate(pcsMain.this, R.layout.filelistitem, null);
+			TextView tvfilename = (TextView) view.findViewById(R.id.tv_FileName);
+			TextView tvmodtime = (TextView) view.findViewById(R.id.tv_ModifyTime);
+			tvfilename.setText(fir.getPath());
+			tvmodtime.setText(new Date(fir.getModifyTime()*1000).toString());
+			return view;
+		}
+		
 	}
 	
-	private void setupViews() {
+	private void setupViews_test() {
 		setContentView(R.layout.pcsmain_test);
-		mResultTextView = (TextView) findViewById(R.id.personalFileResult);
 
 		Button createDirButton = (Button) findViewById(R.id.createDir);
 		createDirButton.setOnClickListener(new View.OnClickListener() {
@@ -242,28 +285,45 @@ public class pcsMain extends Activity {
 								.append('\n')
 								.append("modified time: ")
 								.append(new Date(result.getModifyTime() * 1000));
-						if (null != mResultTextView) {
-							mResultTextView.setText(sb.toString());
-						}
 					}
 
 					@Override
 					public void onFailure(int errCode, String errMsg) {
-						if (null != mResultTextView) {
-							mResultTextView.setText("errCode:" + errCode
-									+ ", errMsg:" + errMsg);
-						}
+						
 					}
 				});
 	}
+	
+	//列出文件方法
+		protected void getPcsFileInfo() {
+			mCloudStorage.list(PcsConf.PERSON_STORAGE_DIR_NAME, null,
+					null, new FileListListener() {
+				
+				public void onSuccess(List<FileInfoResult> result) {
+							pcsFileCount = result.size();
+							myList = new ArrayList<FileInfoResult>();
+							for (FileInfoResult info : result) {
+								Log.i(tag, "info: "+info.getPath());
+								 myList.add(info);
+							}
+							Toast.makeText(getApplication(), "Get File List Success", 0).show();
+							lv.setAdapter(new MyAdapter());
+						}
+
+						@Override
+						public void onFailure(int errCode, String errMsg) {
+							Toast.makeText(getApplication(), "List File error", 0).show();
+						}
+					});
+		}
 	//列出文件方法
 	protected void list() {
 		mCloudStorage.list(PcsConf.PERSON_STORAGE_DIR_NAME, null,
 				null, new FileListListener() {
 
-					@Override
-					public void onSuccess(List<FileInfoResult> result) {
+			public void onSuccess(List<FileInfoResult> result) {
 						StringBuilder sb = new StringBuilder();
+						pcsFileCount = result.size();
 						for (FileInfoResult info : result) {
 							sb.append(info.getPath())
 									.append('\n')
@@ -274,17 +334,12 @@ public class pcsMain extends Activity {
 									.append(new Date(info.getModifyTime()*1000)
 											.toString()).append('\n');
 						}
-						if (null != mResultTextView) {
-							mResultTextView.setText(sb.toString());
-						}
+						
 					}
 
 					@Override
 					public void onFailure(int errCode, String errMsg) {
-						if (null != mResultTextView) {
-							mResultTextView.setText("errCode:" + errCode
-									+ ", errMsg:" + errMsg);
-						}
+						
 					}
 				});
 	}
@@ -300,17 +355,12 @@ public class pcsMain extends Activity {
 						sb.append("total: ").append(result.getTotal())
 								.append('\n').append("used: ")
 								.append(result.getUsed()).toString();
-						if (null != mResultTextView) {
-							mResultTextView.setText(sb.toString());
-						}
+						
 					}
 
 					@Override
 					public void onFailure(int errCode, String errMsg) {
-						if (null != mResultTextView) {
-							mResultTextView.setText("errCode:" + errCode
-									+ ", errMsg:" + errMsg);
-						}
+						
 					}
 				});
 	}
@@ -319,13 +369,12 @@ public class pcsMain extends Activity {
         mCloudStorage.deleteFile(PcsConf.PERSON_STORAGE_DIR_NAME, new FileOperationListener() {
             @Override
             public void onSuccess(String s) {
-                mResultTextView.setText(PcsConf.PERSON_STORAGE_DIR_NAME + " deleted");
+                
             }
 
             @Override
             public void onFailure(String s, int errCode, String errMsg) {
-                mResultTextView.setText("errCode:" + errCode
-                        + ", errMsg:" + errMsg);
+                
             }
         });
     }
@@ -338,10 +387,7 @@ public class pcsMain extends Activity {
 
 					@Override
 					public void onProgress(String source, long bytes, long total) {
-						if (null != mResultTextView) {
-							mResultTextView.setText(source + " upload......:"
-									+ bytes * 100 / total + "%");
-						}
+						
 
 					}
 
@@ -360,19 +406,14 @@ public class pcsMain extends Activity {
 								.append('\n')
 								.append("modified time: ")
 								.append(new Date(result.getModifyTime()*1000));
-						if (null != mResultTextView) {
-							mResultTextView.setText(sb.toString());
-						}
+						
 
 					}
 
 					@Override
 					public void onFailure(String source, int errCode,
 							String errMsg) {
-						if (null != mResultTextView) {
-							mResultTextView.setText(source + " errCode:"
-									+ errCode + ", errMsg:" + errMsg);
-						}
+						
 
 					}
 
@@ -392,32 +433,23 @@ public class pcsMain extends Activity {
 
 					@Override
 					public void onProgress(String source, long bytes, long total) {
-						if (null != mResultTextView) {
-							mResultTextView.setText(source + " download......:"
-									+ bytes * 100 / total + "%");
-						}
+						
 					}
 
 				}, new FileTransferListener() {
 
 					@Override
 					public void onSuccess(String source, String newTargetName) {
-						if (null != mResultTextView) {
-							mResultTextView.setText(source + " downloaded as "
-									+ newTargetName + " in the local.");
-						}
+						
 					}
 
 					@Override
 					public void onFailure(String source, int errCode,
 							String errMsg) {
-						if (null != mResultTextView) {
-							mResultTextView.setText(source + " errCode:"
-									+ errCode + ", errMsg:" + errMsg);
-						}
 					}
+				}
 
-				});
+				);
 	}
 
 	protected void downloadStreamFile() {
@@ -427,10 +459,7 @@ public class pcsMain extends Activity {
 
 					@Override
 					public void onProgress(String source, long bytes, long total) {
-						if (null != mResultTextView) {
-							mResultTextView.setText(source + " download......:"
-									+ bytes * 100 / total + "%");
-						}
+						
 
 					}
 
@@ -438,20 +467,12 @@ public class pcsMain extends Activity {
 
 					@Override
 					public void onSuccess(String source, String newTargetName) {
-						if (null != mResultTextView) {
-							mResultTextView.setText(source + " downloaded as "
-									+ newTargetName + " in the local.");
-						}
-
+						
 					}
 
 					@Override
 					public void onFailure(String source, int errCode,
 							String errMsg) {
-						if (null != mResultTextView) {
-							mResultTextView.setText(source + " errCode:"
-									+ errCode + ", errMsg:" + errMsg);
-						}
 
 					}
 
@@ -470,19 +491,13 @@ public class pcsMain extends Activity {
 
 					@Override
 					public void onSuccess(String source) {
-						if (null != mResultTextView) {
-							mResultTextView.setText(source + " is deleted");
-						}
+						
 					}
 
 					@Override
 					public void onFailure(String source, int errCode,
 							String errMsg) {
-						if (null != mResultTextView) {
-							mResultTextView.setText(source + " errCode:"
-									+ errCode + ", errMsg:" + errMsg);
-						}
-
+						
 					}
 
 				});
@@ -506,17 +521,12 @@ public class pcsMain extends Activity {
 											.toString()).append('\n');
 
 						}
-						if (null != mResultTextView) {
-							mResultTextView.setText(sb.toString());
-						}
+						
 					}
 
 					@Override
 					public void onFailure(int errCode, String errMsg) {
-						if (null != mResultTextView) {
-							mResultTextView.setText("errCode:" + errCode
-									+ ", errMsg:" + errMsg);
-						}
+						
 					}
 				});
 	}
@@ -540,17 +550,12 @@ public class pcsMain extends Activity {
 											.toString()).append('\n');
 
 						}
-						if (null != mResultTextView) {
-							mResultTextView.setText(sb.toString());
-						}
+						
 					}
 
 					@Override
 					public void onFailure(int errCode, String errMsg) {
-						if (null != mResultTextView) {
-							mResultTextView.setText("errCode:" + errCode
-									+ ", errMsg:" + errMsg);
-						}
+						
 					}
 				});
 	}
@@ -573,17 +578,12 @@ public class pcsMain extends Activity {
 											.toString()).append('\n');
 
 						}
-						if (null != mResultTextView) {
-							mResultTextView.setText(sb.toString());
-						}
+						
 					}
 
 					@Override
 					public void onFailure(int errCode, String errMsg) {
-						if (null != mResultTextView) {
-							mResultTextView.setText("errCode:" + errCode
-									+ ", errMsg:" + errMsg);
-						}
+						
 					}
 				});
 	}
@@ -606,17 +606,12 @@ public class pcsMain extends Activity {
 											.toString()).append('\n');
 
 						}
-						if (null != mResultTextView) {
-							mResultTextView.setText(sb.toString());
-						}
+						
 					}
 
 					@Override
 					public void onFailure(int errCode, String errMsg) {
-						if (null != mResultTextView) {
-							mResultTextView.setText("errCode:" + errCode
-									+ ", errMsg:" + errMsg);
-						}
+						
 					}
 				});
 	}
@@ -628,17 +623,12 @@ public class pcsMain extends Activity {
 
 					@Override
 					public void onSuccess(Bitmap bitmap) {
-						if (null != mResultTextView) {
-							mResultTextView.setText(bitmap.toString());
-						}
+						
 					}
 
 					@Override
 					public void onFailure(int errCode, String errMsg) {
-						if (null != mResultTextView) {
-							mResultTextView.setText("errCode:" + errCode
-									+ ", errMsg:" + errMsg);
-						}
+						
 					}
 				});
 	}

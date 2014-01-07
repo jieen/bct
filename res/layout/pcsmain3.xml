@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:background="#00ff00"
-	android:orientation="horizontal" >
+	android:scrollbars="vertical"
+	>
+<LinearLayout
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical" >
 
     <SlidingDrawer
     	android:id="@+id/slidingDrawer1"
@@ -13,13 +17,6 @@
     	android:handle="@+id/handle"
     	android:orientation="horizontal"
     	>
-
-        <ScrollView
-        	android:layout_width="match_parent"
-        	android:layout_height="match_parent"
-        	android:background="#000000"
-        	android:scrollbarStyle="insideOverlay"
-        	android:scrollbars="horizontal" >
 
         	<LinearLayout
         		android:id="@+id/content"
@@ -77,7 +74,6 @@
         			android:layout_height="wrap_content"
         			android:text="@string/strMkdir" />
         	</LinearLayout>
-        </ScrollView>
 
     	<Button
     		android:id="@+id/handle"
@@ -88,3 +84,4 @@
     </SlidingDrawer>
 
 </LinearLayout>
+</ScrollView>

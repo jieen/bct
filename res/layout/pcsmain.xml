@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/LinearLayout1"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:scrollbars="vertical" >
+
+    <LinearLayout
+    	android:id="@+id/llToolMenu"
+    	android:layout_width="match_parent"
+    	android:layout_height="0dp"
+    	android:layout_weight="1"
+    	android:orientation="vertical" >
+    	<TextView 
+    		android:layout_width="match_parent"
+    		android:layout_height="match_parent"
+    		android:text="@string/hello_world"
+    		/>
+    </LinearLayout>
+    		
+	<ListView 
+		android:id="@+id/lvFileItems"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="4"
+		android:scrollbars="vertical"
+		>
+		
+	</ListView>
+    
+
+    <LinearLayout
+    	android:id="@+id/llBootmMenu"
+    	android:layout_width="match_parent"
+    	android:layout_height="0dp"
+    	android:layout_weight="1"
+    	android:orientation="vertical" >
+    	<TextView 
+    		android:layout_width="match_parent"
+    		android:layout_height="match_parent"
+    		android:text="@string/hello_world"
+    		/>
+    </LinearLayout>
+
+</LinearLayout>
